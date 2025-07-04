@@ -1,17 +1,11 @@
-<!-- src/components/Navbar.vue -->
 <template>
   <nav class="navbar" v-if="isLoggedIn">
     <div class="navbar-brand">
       <router-link to="/home">TurnoVet</router-link>
     </div>
     <div class="navbar-links">
-      <!-- Enlace visible para todos los usuarios logueados -->
       <router-link to="/home">Inicio</router-link>
-
-      <!-- Enlace solo para clientes -->
       <router-link v-if="userRole === 'cliente'" to="/turnos">Mis Turnos</router-link>
-      
-      <!-- Enlace solo para administradores -->
       <router-link v-if="userRole === 'admin'" to="/admin">Panel Admin</router-link>
     </div>
     <div class="navbar-user">
@@ -25,20 +19,12 @@ import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
-
-// Comprobamos si el usuario está logueado mirando si hay un 'rol' en localStorage.
 const isLoggedIn = computed(() => !!localStorage.getItem('rol'));
-
-// Obtenemos el rol del usuario para mostrar los enlaces correctos.
 const userRole = ref(localStorage.getItem('rol'));
 
-// Función para cerrar sesión
 const handleLogout = () => {
-  // Borramos el rol del almacenamiento
   localStorage.removeItem('rol');
-  // Redirigimos al usuario a la página de login
   router.push('/login');
-  // Forzamos un refresco de la página para que el Navbar se actualice (solución simple y efectiva)
   window.location.reload();
 };
 </script>
@@ -65,7 +51,7 @@ const handleLogout = () => {
   text-decoration: none;
 }
 .navbar a.router-link-exact-active {
-  color: #42b983; /* Verde de Vue */
+  color: #42b983;
   border-bottom: 2px solid #42b983;
 }
 .navbar-user button {
