@@ -11,7 +11,9 @@
       <li v-for="turno in turnos" :key="turno.id">
         <strong>Fecha:</strong> {{ turno.fecha }} |
         <strong>Hora:</strong> {{ turno.hora }} |
-        <strong>Cliente:</strong> {{ turno.nombreCliente }}
+        <strong>Mascota:</strong> {{ turno.mascota }} |
+        <strong>Motivo:</strong> {{ turno.motivo }} |
+
       </li>
     </ul>
   </div>

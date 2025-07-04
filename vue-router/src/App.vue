@@ -3,11 +3,14 @@
   <main class="main-content">
     <RouterView />
   </main>
+  <Footer />
 </template>
 
 <script setup>
 import { RouterView } from 'vue-router';
-import Navbar from './components/Navbar.vue';
+import Navbar from './components/AppNavbar.vue';
+import Footer from './components/AppFooter.vue';
+
 </script>
 
 <style>
