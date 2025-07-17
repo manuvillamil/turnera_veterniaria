@@ -1,57 +1,41 @@
 <template>
-  <div class="admin-view">
+    <div class="admin-view">
     <h1>Panel de Administración</h1>
 
-    <!-- SECCIÓN PARA MOSTRAR LA LISTA DE TURNOS -->
-    <div class="list-container">
-      <h2>Listado de Turnos</h2>
-      <router-link to="/CreacionTurno" class="action-button">crear turno</router-link>
-      <p v-if="loading">Cargando turnos...</p>
-      <p v-else-if="turnos.length === 0">No hay turnos registrados.</p>
-      <table v-else class="turnos-table">
-        <thead>
-          <tr>
-            <th>Mascota</th>
-            <th>Fecha</th>
-            <th>Hora</th>
-            <th>Motivo</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="turno in turnos" :key="turno.id">
-            <td>{{ turno.mascota }}</td>
-            <td>{{ turno.fecha }}</td>
-            <td>{{ turno.hora }}</td>
-            <td>{{ turno.motivo }}</td>
-            <td>
-              <button @click="iniciarEdicion(turno)" class="btn-editar">Editar</button>
-              <button @click="eliminarTurno(turno.id)" class="btn-eliminar">Eliminar</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <!-- SECCIÓN PARA CREAR Y EDITAR TURNOS -->
+    <div class="form-container">
+      <h2>{{ modoEdicion ? 'Editar Turno' : 'Crear Nuevo Turno' }}</h2>
+      <form @submit.prevent="handleSubmit">
+        <div class="form-group">
+          <label for="mascota">Nombre de la Mascota:</label>
+          <input type="text" v-model="turnoActual.mascota" id="mascota" required>
+        </div>
+        <div class="form-group">
+          <label for="fecha">Fecha:</label>
+          <input type="date" v-model="turnoActual.fecha" id="fecha" required>
+        </div>
+        <div class="form-group">
+          <label for="hora">Hora:</label>
+          <input type="time" v-model="turnoActual.hora" id="hora" required>
+        </div>
+        <div class="form-group">
+          <label for="motivo">Motivo de la consulta:</label>
+          <input type="text" v-model="turnoActual.motivo" id="motivo" required>
+        </div>
+        
+        <button type="submit">{{ modoEdicion ? 'Guardar Cambios' : 'Crear Turno' }}</button>
+        <button type="button" v-if="modoEdicion" @click="cancelarEdicion" class="btn-cancelar">Cancelar</button>
+      </form>
     </div>
-    
-    <hr>
-
-    <!-- SECCIÓN DE INFORMES (Requisito del TP) -->
-    <div class="informes-container">
-      <h2>Informes</h2>
-      <p><strong>Cantidad total de turnos registrados:</strong> {{ totalTurnos }}</p>
-    </div>
-
-  </div>
+</div>
 </template>
 
+
 <script setup>
-import { ref, onMounted, computed } from 'vue';
-import router from '../router';
+import { ref } from 'vue';
 
 const apiUrl = 'https://6861b32096f0cc4e34b743f2.mockapi.io/api/v1/turnos';
 
-const turnos = ref([]);
-const loading = ref(true);
 const modoEdicion = ref(false);
 const turnoActual = ref({
   id: null,
@@ -62,7 +46,7 @@ const turnoActual = ref({
   clienteId: '1' // Añadimos un valor por defecto
 });
 
-const obtenerTurnos = async () => {
+/* const obtenerTurnos = async () => {
   loading.value = true;
   try {
     const response = await fetch(apiUrl);
@@ -77,17 +61,17 @@ const obtenerTurnos = async () => {
   } finally {
     loading.value = false;
   }
-};
+}; */
 
-onMounted(obtenerTurnos);
-
-/* const handleSubmit = async () => {
+/* onMounted(obtenerTurnos);
+ */
+const handleSubmit = async () => {
   if (modoEdicion.value) {
     await actualizarTurno();
   } else {
     await crearTurno();
   }
-}; 
+};
 
 const crearTurno = async () => {
   try {
@@ -117,30 +101,14 @@ const actualizarTurno = async () => {
   } catch (error) {
     console.error(error);
   }
-};*/
-
-const eliminarTurno = async (id) => {
-  if (confirm('¿Estás seguro de que quieres eliminar este turno?')) {
-    try {
-      const response = await fetch(`${apiUrl}/${id}`, { method: 'DELETE' });
-      if (!response.ok) throw new Error('Error al eliminar');
-      await obtenerTurnos();
-    } catch (error) {
-      console.error(error);
-    }
-  }
 };
 
-const iniciarEdicion = (turno) => {
-  router.push({ name: 'CreacionTurno', query: { modoEdicion: 'true', turnoActual: { ...turno } } })
-};
-
-/* const cancelarEdicion = () => {
+const cancelarEdicion = () => {
   modoEdicion.value = false;
   resetearFormulario();
-}; */
+};
 
-/* const resetearFormulario = () => {
+const resetearFormulario = () => {
   turnoActual.value = {
     id: null,
     mascota: '',
@@ -149,9 +117,8 @@ const iniciarEdicion = (turno) => {
     motivo: '',
     clienteId: '1'
   };
-} */
+}
 
-const totalTurnos = computed(() => turnos.value.length);
 </script>
 
 <style scoped>
